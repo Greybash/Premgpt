@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PremGPT Web App</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <h2>PremGPT</h2>
+        <h3>He is very very smarty boy and tharki too</h3>
+       
+    <div id="chat-box"></div>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("user-input").value;
+            if (!userInput.trim()) return;
+
+            appendMessage("You", userInput);
+            document.getElementById("user-input").value = "";
+
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: userInput })
+            });
+
+            const data = await response.json();
+            appendMessage("Bot", data.reply || "Error: " + data.error);
+        }
+
+        function appendMessage(sender, text) {
+            const chatBox = document.getElementById("chat-box");
+            const msg = document.createElement("div");
+            msg.classList.add("message");
+            msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
